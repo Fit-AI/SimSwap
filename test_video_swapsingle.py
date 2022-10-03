@@ -7,6 +7,7 @@ LastEditTime: 2021-11-24 19:00:38
 Description: 
 '''
 
+import os
 import cv2
 import torch
 import fractions
@@ -57,12 +58,16 @@ if __name__ == '__main__':
 
     app = Face_detect_crop(name='antelope', root='./insightface_func/models')
     app.prepare(ctx_id= 0, det_thresh=0.6, det_size=(640,640),mode=mode)
+
     with torch.no_grad():
         pic_a = opt.pic_a_path
-        # img_a = Image.open(pic_a).convert('RGB')
+        assert os.path.isfile(pic_a)
+        img_a = Image.open(pic_a).convert('RGB')
         img_a_whole = cv2.imread(pic_a)
         img_a_align_crop, _ = app.get(img_a_whole,crop_size)
-        img_a_align_crop_pil = Image.fromarray(cv2.cvtColor(img_a_align_crop[0],cv2.COLOR_BGR2RGB)) 
+        # img_a_align_crop = cv2.imread(pic_a)
+        img_a_align_crop_pil = Image.fromarray(cv2.cvtColor(img_a_align_crop[0],
+                                               cv2.COLOR_BGR2RGB)) 
         img_a = transformer_Arcface(img_a_align_crop_pil)
         img_id = img_a.view(-1, img_a.shape[0], img_a.shape[1], img_a.shape[2])
 

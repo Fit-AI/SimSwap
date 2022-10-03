@@ -34,6 +34,7 @@ def _totensor(array):
     tensor = torch.from_numpy(array)
     img = tensor.transpose(0, 1).transpose(0, 2).contiguous()
     return img.float().div(255)
+
 if __name__ == '__main__':
     opt = TestOptions().parse()
 
@@ -48,11 +49,13 @@ if __name__ == '__main__':
     else:
         mode = 'None'
     logoclass = watermark_image('./simswaplogo/simswaplogo.png')
+
     model = create_model(opt)
     model.eval()
 
     spNorm =SpecificNorm()
     app = Face_detect_crop(name='antelope', root='./insightface_func/models')
+    # app.prepare(ctx_id= 0, det_thresh=0.6, det_size=(640,640),mode=mode)
     app.prepare(ctx_id= 0, det_thresh=0.6, det_size=(640,640),mode=mode)
 
     with torch.no_grad():

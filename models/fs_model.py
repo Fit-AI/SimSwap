@@ -54,7 +54,8 @@ class fsModel(BaseModel):
             from .fs_networks import Generator_Adain_Upsample, Discriminator
         elif opt.crop_size == 512:
             from .fs_networks_512 import Generator_Adain_Upsample, Discriminator
-
+        else:
+            raise RuntimeError('Invalid crop size')
         # Generator network
         self.netG = Generator_Adain_Upsample(input_nc=3, output_nc=3, latent_size=512, n_blocks=9, deep=False)
         self.netG.to(device)
