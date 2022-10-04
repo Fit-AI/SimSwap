@@ -1,4 +1,9 @@
-FROM nvidia/cuda:11.3.0-devel-ubuntu20.04
+FROM pytorch/pytorch:1.7.0-cuda11.0-cudnn8-devel
+
+RUN rm /etc/apt/sources.list.d/cuda.list
+
+RUN python3 -c "import torch; assert torch.cuda.is_available()"
+
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update &&                   \
@@ -7,12 +12,12 @@ RUN apt-get update &&                   \
                        python3-pip      \
                        libopencv-dev
 
-RUN pip3 install torch==1.12.0 torchvision==0.13.0          \
-                 --ignore-installed imageio                 \
-                 insightface==0.2.1 onnxruntime moviepy     \
-                 protobuf==3.20.0                           \
-                 requests flask
-
+RUN pip install --upgrade pip && 	\
+    pip install numpy --upgrade &&  	\
+    pip install imageio                 		   \
+                insightface==0.2.1 onnxruntime moviepy     \
+                protobuf==3.20.0                           \
+                requests flask
 WORKDIR /app
 COPY models/ /app/models
 COPY options/ /app/options
@@ -22,7 +27,7 @@ COPY parsing_model/ /app/parsing_model
 COPY simswaplogo/ /app/simswaplogo
 COPY arcface_model/ /app/arcface_model
 COPY checkpoints/ /app/checkpoints
-RUN pip3 install gunicorn munch supabase
+RUN pip3 install --upgrade pip && pip install gunicorn munch supabase
 COPY service.py /app
 COPY run.sh /app
 COPY default_configuration.json /app/
